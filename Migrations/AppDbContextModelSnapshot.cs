@@ -193,11 +193,9 @@ namespace ProyectoFinal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ImageId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ImagesId")
-                        .HasColumnType("int");
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -212,8 +210,6 @@ namespace ProyectoFinal.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ImagesId");
 
                     b.ToTable("Users");
                 });
@@ -254,17 +250,6 @@ namespace ProyectoFinal.Migrations
                     b.Navigation("Availability");
 
                     b.Navigation("Client");
-                });
-
-            modelBuilder.Entity("ProyectoFinal.Models.Users", b =>
-                {
-                    b.HasOne("ProyectoFinal.Models.Images", "Images")
-                        .WithMany()
-                        .HasForeignKey("ImagesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }
