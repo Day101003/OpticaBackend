@@ -144,5 +144,33 @@ namespace ProyectoFinal.Controllers
         {
             return _context.Categories.Any(e => e.Id == id);
         }
+
+        [HttpGet("{id}/products")]
+        public async Task<IActionResult> GetProductsByCategory(int id)
+        {
+            var category = await _context.Categories
+                .Include(c => c.Products)
+                .ThenInclude(p => p.Images)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (category == null)
+                return NotFound(new { message = $"Category with id {id} not found." });
+
+            var result = new
+            {
+                categoryName = category.Name,
+                products = category.Products.Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Price,
+                    p.Code,
+                    p.IsActive,
+                    images = p.Images != null ? new { p.Images.Id, p.Images.Route } : null
+                }).ToList()
+            };
+
+            return Ok(result);
+        }
     }
 }

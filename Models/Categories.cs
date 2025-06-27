@@ -12,6 +12,8 @@ namespace ProyectoFinal.Models
         public string Name { get; set; }
 
         [Display(Name = "Ruta")]
-        public string Route { get; set; } 
+        public string Route { get; set; }
+        public ICollection<Products> Products { get; set; } = new List<Products>();
+
     }
 }

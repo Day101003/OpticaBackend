@@ -1,5 +1,37 @@
 [
   {
+    "ContainingType": "ProyectoFinal.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginDto",
+        "Type": "LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProyectoFinal.Controllers.AuthController",
+    "Method": "Register",
+    "RelativePath": "api/auth/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "registerDto",
+        "Type": "RegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ProyectoFinal.Controllers.AvailabilitiesController",
     "Method": "GetAvailability",
     "RelativePath": "api/Availabilities",
@@ -266,6 +298,22 @@
     "Method": "DeleteCategory",
     "RelativePath": "api/Categories/{id}",
     "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProyectoFinal.Controllers.CategoriesController",
+    "Method": "GetProductsByCategory",
+    "RelativePath": "api/Categories/{id}/products",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
