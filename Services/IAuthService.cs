@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
+using ProyectoFinal.Models;
 
 public interface IAuthService
 {
     Task<string> RegisterAsync(RegisterDto registerDto);
-    Task<string> LoginAsync(LoginDto loginDto);
+    Task<LoginResponseDto> LoginAsync(LoginDto loginDto);  // Devuelve LoginResponseDto
 }
