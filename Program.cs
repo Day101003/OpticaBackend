@@ -4,17 +4,29 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ProyectoFinal.Services;
-
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// 👇 INTERNACIONALIZACIÓN
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "en", "es" };
+    options.SetDefaultCulture("es")
+           .AddSupportedCultures(supportedCultures)
+           .AddSupportedUICultures(supportedCultures);
+});
+
+// 👇 Controladores con opciones de serialización
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
-// Middleware de autenticación JWT
+// 👇 Autenticación JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -30,7 +42,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Configuración de CORS
+// 👇 Configuración de CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -39,35 +51,39 @@ builder.Services.AddCors(options =>
                           .AllowAnyHeader());
 });
 
-// Swagger / OpenAPI
+// 👇 Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// DbContext
+// 👇 DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbContext")));
 
-builder.Services.AddScoped<IAuthService, AuthService>();  // Asegúrate de agregar tus servicios aquí
+// 👇 Servicios propios
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// Middleware pipeline
+// 👇 Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProyectoFinal API V1");
-        c.RoutePrefix = "swagger"; // Para que Swagger UI quede en http://localhost:5282/
+        c.RoutePrefix = "swagger";
     });
 }
 
-// Usa archivos estáticos solo si tienes la carpeta wwwroot
+// 👇 Usa archivos estáticos si corresponde
 app.UseStaticFiles();
 
-app.UseCors("AllowAllOrigins");
+// 👇 Internacionalización en el pipeline
+var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
+app.UseRequestLocalization(locOptions.Value);
 
-app.UseAuthentication();  // Añadir el middleware de autenticación
+app.UseCors("AllowAllOrigins");
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

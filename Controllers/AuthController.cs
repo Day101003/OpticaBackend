@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ProyectoFinal.Services;
 using ProyectoFinal.Models;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authorization;
-
 
 namespace ProyectoFinal.Controllers
 {
@@ -11,10 +11,12 @@ namespace ProyectoFinal.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IStringLocalizer<Messages> localizer)
         {
             _authService = authService;
+            _localizer = localizer;
         }
 
         [HttpPost("login")]
@@ -22,42 +24,54 @@ namespace ProyectoFinal.Controllers
         {
             try
             {
-                // El método LoginAsync devuelve un LoginResponseDto, no solo el token
                 var loginResponse = await _authService.LoginAsync(loginDto);
-                return Ok(loginResponse);  // Devuelve el objeto completo (Token y Role)
+                return Ok(new
+                {
+                    message = _localizer["LoginSuccess"],
+                    loginResponse
+                });
             }
             catch (UnauthorizedAccessException)
             {
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { message = _localizer["InvalidCredentials"] });
             }
         }
 
-        // Ruta para registro de usuario
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
             {
                 var token = await _authService.RegisterAsync(registerDto);
-                return Ok(new { Token = token });
+                return Ok(new
+                {
+                    message = _localizer["RegisterSuccess"],
+                    Token = token
+                });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest(ex.Message); // Retorna el error si ya existe el email o algún otro error
+                return BadRequest(new { message = _localizer["RegisterError"] });
             }
         }
+    }
 
-        [Route("api/[controller]")]
-        [ApiController]
-        public class AdminController : ControllerBase
+    [ApiController]
+    [Route("api/admin")]
+    public class AdminController : ControllerBase
+    {
+        private readonly IStringLocalizer<Messages> _localizer;
+
+        public AdminController(IStringLocalizer<Messages> localizer)
         {
-            // Esta ruta solo será accesible para administradores
-            [Authorize(Roles = "Admin")]
-            [HttpGet("dashboard")]
-            public IActionResult GetAdminDashboard()
-            {
-                return Ok("Bienvenido al panel de administración");
-            }
+            _localizer = localizer;
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("dashboard")]
+        public IActionResult GetAdminDashboard()
+        {
+            return Ok(new { message = _localizer["LoginSuccess"] }); // podrías crear una clave DashboardWelcome si querés
         }
     }
 }

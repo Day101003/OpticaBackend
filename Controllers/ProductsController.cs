@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using Microsoft.Extensions.Localization; // para el localizador
 using System.Collections.Generic;
 using System.IO;
 using System;
@@ -15,10 +16,12 @@ namespace ProyectoFinal.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(AppDbContext context, IStringLocalizer<Messages> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: api/Products
@@ -42,7 +45,7 @@ namespace ProyectoFinal.Controllers
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             return product;
@@ -56,7 +59,7 @@ namespace ProyectoFinal.Controllers
 
             if (existingProduct == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             existingProduct.Code = productData.Code;
@@ -77,12 +80,12 @@ namespace ProyectoFinal.Controllers
             {
                 if (!ProductsExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = _localizer["NotFound"] });
                 }
                 throw;
             }
 
-            return NoContent();
+            return Ok(new { message = _localizer["Updated"] });
         }
 
         // POST: api/Products
@@ -90,40 +93,37 @@ namespace ProyectoFinal.Controllers
         public async Task<ActionResult<Products>> CreateProduct([FromBody] Products product)
         {
             if (product == null)
-                return BadRequest("Producto vacío.");
+                return BadRequest(new { message = _localizer["InvalidRequest"] });
 
             if (string.IsNullOrWhiteSpace(product.Name) ||
-    product.CategoriaId == 0 || product.CategoriaId == null ||
-    product.ImageId == 0 || product.ImageId == null ||
-    product.Price == null || product.Price <= 0)
+                product.CategoriaId == 0 || product.CategoriaId == null ||
+                product.ImageId == 0 || product.ImageId == null ||
+                product.Price == null || product.Price <= 0)
             {
-                return BadRequest("Faltan datos obligatorios o datos inválidos.");
+                return BadRequest(new { message = _localizer["InvalidRequest"] });
             }
-
 
             var categoryExists = await _context.Categories.AnyAsync(c => c.Id == product.CategoriaId);
             var imageExists = await _context.Images.AnyAsync(i => i.Id == product.ImageId);
 
             if (!categoryExists)
-                return BadRequest($"No existe la categoría con Id {product.CategoriaId}.");
+                return BadRequest(new { message = $"{_localizer["NotFound"]} (Category Id {product.CategoriaId})" });
 
             if (!imageExists)
-                return BadRequest($"No existe la imagen con Id {product.ImageId}.");
+                return BadRequest(new { message = $"{_localizer["NotFound"]} (Image Id {product.ImageId})" });
 
             try
             {
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+                return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, new { message = _localizer["Created"], product });
             }
             catch (Exception ex)
             {
-                // Devuelve error con mensaje
-                return BadRequest($"Error al guardar el producto: {ex.Message}");
+                return BadRequest(new { message = $"{_localizer["InvalidRequest"]}: {ex.Message}" });
             }
         }
-
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
@@ -132,13 +132,13 @@ namespace ProyectoFinal.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = _localizer["Deleted"] });
         }
 
         private bool ProductsExists(int id)

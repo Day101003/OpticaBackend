@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
 
@@ -15,10 +16,12 @@ namespace ProyectoFinal.Controllers
     public class QuotesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public QuotesController(AppDbContext context)
+        public QuotesController(AppDbContext context, IStringLocalizer<Messages> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: api/Quotes
@@ -36,20 +39,19 @@ namespace ProyectoFinal.Controllers
 
             if (quotes == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             return quotes;
         }
 
         // PUT: api/Quotes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutQuotes(int id, Quotes quotes)
         {
             if (id != quotes.Id)
             {
-                return BadRequest();
+                return BadRequest(new { message = _localizer["InvalidRequest"] });
             }
 
             _context.Entry(quotes).State = EntityState.Modified;
@@ -62,7 +64,7 @@ namespace ProyectoFinal.Controllers
             {
                 if (!QuotesExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = _localizer["NotFound"] });
                 }
                 else
                 {
@@ -70,18 +72,21 @@ namespace ProyectoFinal.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = _localizer["Updated"] });
         }
 
         // POST: api/Quotes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Quotes>> PostQuotes(Quotes quotes)
         {
             _context.Quotes.Add(quotes);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetQuotes", new { id = quotes.Id }, quotes);
+            return CreatedAtAction("GetQuotes", new { id = quotes.Id }, new
+            {
+                message = _localizer["Created"],
+                data = quotes
+            });
         }
 
         // DELETE: api/Quotes/5
@@ -91,13 +96,13 @@ namespace ProyectoFinal.Controllers
             var quotes = await _context.Quotes.FindAsync(id);
             if (quotes == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             _context.Quotes.Remove(quotes);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = _localizer["Deleted"] });
         }
 
         private bool QuotesExists(int id)
