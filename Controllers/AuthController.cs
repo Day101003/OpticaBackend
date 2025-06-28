@@ -20,8 +20,9 @@ namespace ProyectoFinal.Controllers
         {
             try
             {
-                var token = await _authService.LoginAsync(loginDto);
-                return Ok(new { Token = token });
+                // El método LoginAsync devuelve un LoginResponseDto, no solo el token
+                var loginResponse = await _authService.LoginAsync(loginDto);
+                return Ok(loginResponse);  // Devuelve el objeto completo (Token y Role)
             }
             catch (UnauthorizedAccessException)
             {
@@ -41,6 +42,19 @@ namespace ProyectoFinal.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message); // Retorna el error si ya existe el email o algún otro error
+            }
+        }
+
+        [Route("api/[controller]")]
+        [ApiController]
+        public class AdminController : ControllerBase
+        {
+            // Esta ruta solo será accesible para administradores
+            [Authorize(Roles = "Admin")]
+            [HttpGet("dashboard")]
+            public IActionResult GetAdminDashboard()
+            {
+                return Ok("Bienvenido al panel de administración");
             }
         }
     }

@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProyectoFinal.Models
 {
+    public enum Role
+    {
+        User,  // Usuario normal
+        Admin  // Administrador
+    }
+
     public class Users
     {
         [Key]
@@ -34,5 +40,9 @@ namespace ProyectoFinal.Models
         [Required]
         [Display(Name = "Ruta Imagen de Perfil")]
         public string ImagePath { get; set; } = "assets/img/FotoPerfil/default.jpg";
+
+        [Required]
+        [Display(Name = "Rol")]
+        public Role Role { get; set; } = Role.User;  // Por defecto, todos los usuarios son de tipo "User"
     }
 }
