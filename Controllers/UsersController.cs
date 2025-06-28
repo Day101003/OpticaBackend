@@ -78,11 +78,21 @@ namespace ProyectoFinal.Controllers
         [HttpPost]
         public async Task<ActionResult<Users>> PostUsers(Users users)
         {
+            
+            if (string.IsNullOrWhiteSpace(users.Password))
+            {
+                return BadRequest(new { error = "La contraseña es obligatoria." });
+            }
+
+        
+            users.Password = BCrypt.Net.BCrypt.HashPassword(users.Password);
+
             _context.Users.Add(users);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUsers", new { id = users.Id }, users);
         }
+
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
