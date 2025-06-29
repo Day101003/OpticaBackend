@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
 using System.Collections.Generic;
@@ -14,10 +15,12 @@ namespace ProyectoFinal.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public CategoriesController(AppDbContext context)
+        public CategoriesController(AppDbContext context, IStringLocalizer<Messages> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: api/Categories
@@ -35,7 +38,7 @@ namespace ProyectoFinal.Controllers
 
             if (category == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             return category;
@@ -52,7 +55,7 @@ namespace ProyectoFinal.Controllers
 
             if (category == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             category.Name = name;
@@ -84,12 +87,12 @@ namespace ProyectoFinal.Controllers
             {
                 if (!CategoriesExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = _localizer["NotFound"] });
                 }
                 throw;
             }
 
-            return NoContent();
+            return Ok(new { message = _localizer["Updated"] });
         }
 
         // POST: api/Categories
@@ -121,7 +124,11 @@ namespace ProyectoFinal.Controllers
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
+            return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, new
+            {
+                message = _localizer["Created"],
+                data = category
+            });
         }
 
         // DELETE: api/Categories/5
@@ -131,13 +138,13 @@ namespace ProyectoFinal.Controllers
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = _localizer["Deleted"] });
         }
 
         private bool CategoriesExists(int id)
@@ -154,7 +161,9 @@ namespace ProyectoFinal.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (category == null)
-                return NotFound(new { message = $"Category with id {id} not found." });
+            {
+                return NotFound(new { message = _localizer["NotFound"] });
+            }
 
             var result = new
             {

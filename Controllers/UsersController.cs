@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using Microsoft.Extensions.Localization;
 
 namespace ProyectoFinal.Controllers
 {
@@ -15,10 +16,12 @@ namespace ProyectoFinal.Controllers
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public UsersController(AppDbContext context)
+        public UsersController(AppDbContext context, IStringLocalizer<Messages> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: api/Users
@@ -36,20 +39,19 @@ namespace ProyectoFinal.Controllers
 
             if (users == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             return users;
         }
 
         // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsers(int id, Users users)
         {
             if (id != users.Id)
             {
-                return BadRequest();
+                return BadRequest(new { message = _localizer["InvalidRequest"] });
             }
 
             _context.Entry(users).State = EntityState.Modified;
@@ -62,7 +64,7 @@ namespace ProyectoFinal.Controllers
             {
                 if (!UsersExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = _localizer["NotFound"] });
                 }
                 else
                 {
@@ -70,29 +72,25 @@ namespace ProyectoFinal.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = _localizer["Updated"] });
         }
 
         // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Users>> PostUsers(Users users)
         {
-            
             if (string.IsNullOrWhiteSpace(users.Password))
             {
-                return BadRequest(new { error = "La contraseña es obligatoria." });
+                return BadRequest(new { message = _localizer["InvalidRequest"] });
             }
 
-        
             users.Password = BCrypt.Net.BCrypt.HashPassword(users.Password);
 
             _context.Users.Add(users);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUsers", new { id = users.Id }, users);
+            return CreatedAtAction(nameof(GetUsers), new { id = users.Id }, new { message = _localizer["Created"], data = users });
         }
-
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
@@ -101,13 +99,13 @@ namespace ProyectoFinal.Controllers
             var users = await _context.Users.FindAsync(id);
             if (users == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             _context.Users.Remove(users);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = _localizer["Deleted"] });
         }
 
         private bool UsersExists(int id)
@@ -116,3 +114,4 @@ namespace ProyectoFinal.Controllers
         }
     }
 }
+

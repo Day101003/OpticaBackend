@@ -21,6 +21,14 @@
         },
         "runtime": {
           "ProyectoFinal.dll": {}
+        },
+        "resources": {
+          "en/ProyectoFinal.resources.dll": {
+            "locale": "en"
+          },
+          "es/ProyectoFinal.resources.dll": {
+            "locale": "es"
+          }
         }
       },
       "Azure.Core/1.38.0": {

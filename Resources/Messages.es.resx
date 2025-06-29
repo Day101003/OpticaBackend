@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="LoginSuccess" xml:space="preserve">
+    <value>Inicio de sesión exitoso</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Credenciales inválidas</value>
+  </data>
+  <data name="RegisterSuccess" xml:space="preserve">
+    <value>Registro exitoso</value>
+  </data>
+  <data name="RegisterError" xml:space="preserve">
+    <value>Error al registrar usuario</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>No encontrado</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Creado exitosamente</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>Actualizado exitosamente</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Eliminado exitosamente</value>
+  </data>
+  <data name="InvalidRequest" xml:space="preserve">
+    <value>Solicitud inválida</value>
+  </data>
+</root>

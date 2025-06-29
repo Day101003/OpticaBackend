@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace ProyectoFinal.Controllers
 {
@@ -12,10 +13,14 @@ namespace ProyectoFinal.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(
+            ILogger<WeatherForecastController> logger,
+            IStringLocalizer<Messages> localizer)
         {
             _logger = logger;
+            _localizer = localizer;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -25,7 +30,7 @@ namespace ProyectoFinal.Controllers
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
                 TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                Summary = _localizer["Summary"]
             })
             .ToArray();
         }

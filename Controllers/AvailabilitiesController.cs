@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using Microsoft.Extensions.Localization;
 
 namespace ProyectoFinal.Controllers
 {
@@ -15,10 +16,12 @@ namespace ProyectoFinal.Controllers
     public class AvailabilitiesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public AvailabilitiesController(AppDbContext context)
+        public AvailabilitiesController(AppDbContext context, IStringLocalizer<Messages> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: api/Availabilities
@@ -36,20 +39,19 @@ namespace ProyectoFinal.Controllers
 
             if (availability == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             return availability;
         }
 
         // PUT: api/Availabilities/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAvailability(int id, Availability availability)
         {
             if (id != availability.Id)
             {
-                return BadRequest();
+                return BadRequest(new { message = _localizer["InvalidRequest"] });
             }
 
             _context.Entry(availability).State = EntityState.Modified;
@@ -62,7 +64,7 @@ namespace ProyectoFinal.Controllers
             {
                 if (!AvailabilityExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = _localizer["NotFound"] });
                 }
                 else
                 {
@@ -70,18 +72,18 @@ namespace ProyectoFinal.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { message = _localizer["Updated"] });
         }
 
         // POST: api/Availabilities
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Availability>> PostAvailability(Availability availability)
         {
             _context.Availability.Add(availability);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetAvailability", new { id = availability.Id }, availability);
+            return CreatedAtAction("GetAvailability", new { id = availability.Id },
+                new { message = _localizer["Created"], data = availability });
         }
 
         // DELETE: api/Availabilities/5
@@ -91,13 +93,13 @@ namespace ProyectoFinal.Controllers
             var availability = await _context.Availability.FindAsync(id);
             if (availability == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             _context.Availability.Remove(availability);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = _localizer["Deleted"] });
         }
 
         private bool AvailabilityExists(int id)
@@ -106,3 +108,4 @@ namespace ProyectoFinal.Controllers
         }
     }
 }
+

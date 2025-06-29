@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
+using Microsoft.Extensions.Localization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
@@ -14,10 +15,12 @@ namespace ProyectoFinal.Controllers
     public class ImagesController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<Messages> _localizer;
 
-        public ImagesController(AppDbContext context)
+        public ImagesController(AppDbContext context, IStringLocalizer<Messages> localizer)
         {
             _context = context;
+            _localizer = localizer;
         }
 
         // GET: api/Images
@@ -35,7 +38,7 @@ namespace ProyectoFinal.Controllers
 
             if (image == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             return image;
@@ -52,7 +55,7 @@ namespace ProyectoFinal.Controllers
 
             if (img == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             img.Type = type;
@@ -84,12 +87,12 @@ namespace ProyectoFinal.Controllers
             {
                 if (!ImagesExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = _localizer["NotFound"] });
                 }
                 throw;
             }
 
-            return NoContent();
+            return Ok(new { message = _localizer["Updated"] });
         }
 
         // POST: api/Images
@@ -118,7 +121,7 @@ namespace ProyectoFinal.Controllers
             _context.Images.Add(img);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetImage), new { id = img.Id }, img);
+            return CreatedAtAction(nameof(GetImage), new { id = img.Id }, new { message = _localizer["Created"] });
         }
 
         // DELETE: api/Images/5
@@ -128,13 +131,13 @@ namespace ProyectoFinal.Controllers
             var image = await _context.Images.FindAsync(id);
             if (image == null)
             {
-                return NotFound();
+                return NotFound(new { message = _localizer["NotFound"] });
             }
 
             _context.Images.Remove(image);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(new { message = _localizer["Deleted"] });
         }
 
         private bool ImagesExists(int id)
