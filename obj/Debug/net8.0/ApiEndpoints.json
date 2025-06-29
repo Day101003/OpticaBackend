@@ -1,5 +1,15 @@
 [
   {
+    "ContainingType": "ProyectoFinal.Controllers.AdminController",
+    "Method": "GetAdminDashboard",
+    "RelativePath": "api/admin/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ProyectoFinal.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/auth/login",

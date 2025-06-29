@@ -24,12 +24,11 @@ namespace ProyectoFinal.Controllers
         {
             try
             {
+                // ?? Llama al servicio que genera el token y devuelve rol
                 var loginResponse = await _authService.LoginAsync(loginDto);
-                return Ok(new
-                {
-                    message = _localizer["LoginSuccess"],
-                    loginResponse
-                });
+
+                // ? Devolver directamente el DTO para facilitar acceso en frontend
+                return Ok(loginResponse); // { "token": "...", "role": "..." }
             }
             catch (UnauthorizedAccessException)
             {
@@ -46,7 +45,7 @@ namespace ProyectoFinal.Controllers
                 return Ok(new
                 {
                     message = _localizer["RegisterSuccess"],
-                    Token = token
+                    token = token
                 });
             }
             catch (Exception)
@@ -71,7 +70,7 @@ namespace ProyectoFinal.Controllers
         [HttpGet("dashboard")]
         public IActionResult GetAdminDashboard()
         {
-            return Ok(new { message = _localizer["LoginSuccess"] }); // podrías crear una clave DashboardWelcome si querés
+            return Ok(new { message = _localizer["LoginSuccess"] });
         }
     }
 }
