@@ -290,7 +290,9 @@ C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\Op
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\ProyectoFinal.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\ProyectoFinal.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\ProyectoFinal.sourcelink.json
+C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\en\ProyectoFinal.resources.cs
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\en\ProyectoFinal.resources.dll
+C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\es\ProyectoFinal.resources.cs
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\es\ProyectoFinal.resources.dll
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\scopedcss\bundle\ProyectoFinal.styles.css
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\staticwebassets.build.json
@@ -303,4 +305,3 @@ C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\Op
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\ProyectoFinal.pdb
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\ProyectoFinal.genruntimeconfig.cache
 C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\ref\ProyectoFinal.dll
-C:\Users\dayan\OneDrive - Universidad de Costa Rica\Escritorio\Lenguajes\.NET\OpticaBackend\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
