@@ -28,5 +28,11 @@ namespace ProyectoFinal.Models
         public int AvailabilityID { get; set; }
 
         public Availability Availability { get; set; }
+
+        [ForeignKey("User")]
+        [Display(Name = "Usuario")]
+        public int? UserId { get; set; } // Opcional, para usuarios autenticados
+
+        public Users User { get; set; }
     }
 }

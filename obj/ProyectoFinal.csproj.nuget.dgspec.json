@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\dayan\\OneDrive - Universidad de Costa Rica\\Escritorio\\Lenguajes\\.NET\\OpticaBackend\\ProyectoFinal.csproj": {}
+    "C:\\Users\\junio\\Source\\Repos\\OpticaBackend\\ProyectoFinal.csproj": {}
   },
   "projects": {
-    "C:\\Users\\dayan\\OneDrive - Universidad de Costa Rica\\Escritorio\\Lenguajes\\.NET\\OpticaBackend\\ProyectoFinal.csproj": {
+    "C:\\Users\\junio\\Source\\Repos\\OpticaBackend\\ProyectoFinal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\dayan\\OneDrive - Universidad de Costa Rica\\Escritorio\\Lenguajes\\.NET\\OpticaBackend\\ProyectoFinal.csproj",
+        "projectUniqueName": "C:\\Users\\junio\\Source\\Repos\\OpticaBackend\\ProyectoFinal.csproj",
         "projectName": "ProyectoFinal",
-        "projectPath": "C:\\Users\\dayan\\OneDrive - Universidad de Costa Rica\\Escritorio\\Lenguajes\\.NET\\OpticaBackend\\ProyectoFinal.csproj",
-        "packagesPath": "C:\\Users\\dayan\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\dayan\\OneDrive - Universidad de Costa Rica\\Escritorio\\Lenguajes\\.NET\\OpticaBackend\\obj\\",
+        "projectPath": "C:\\Users\\junio\\Source\\Repos\\OpticaBackend\\ProyectoFinal.csproj",
+        "packagesPath": "C:\\Users\\junio\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\junio\\Source\\Repos\\OpticaBackend\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\dayan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\junio\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
