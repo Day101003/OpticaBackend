@@ -10,7 +10,7 @@ namespace ProyectoFinal.Models
         public int Id { get; set; }
 
         [Display(Name = "Notas")]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         [Display(Name = "¿Activa?")]
         public bool IsActive { get; set; } = true;
@@ -20,13 +20,19 @@ namespace ProyectoFinal.Models
         [Display(Name = "Cliente")]
         public int ClienteId { get; set; }
 
-        public Clients Client { get; set; }
+        public Clients? Client { get; set; }
 
         [Required]
         [ForeignKey("Availability")]
         [Display(Name = "Availability")]
         public int AvailabilityID { get; set; }
 
-        public Availability Availability { get; set; }
+        public Availability? Availability { get; set; }
+
+        [ForeignKey("User")]
+        [Display(Name = "Usuario")]
+        public int? UserId { get; set; } // Opcional, para usuarios autenticados
+
+        public Users? User { get; set; }
     }
 }

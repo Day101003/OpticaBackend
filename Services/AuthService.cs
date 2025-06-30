@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Models;
 using ProyectoFinal.Data;
-using ProyectoFinal.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -38,7 +37,7 @@ namespace ProyectoFinal.Services
                 Phone = registerDto.Phone,
                 DateRegister = DateTime.Now,
                 ImagePath = "assets/img/FotoPerfil/default.jpg",
-                Role = Role.User  // Asignar rol de "User" por defecto
+                Role = Role.User
             };
 
             _context.Users.Add(newUser);
@@ -59,7 +58,7 @@ namespace ProyectoFinal.Services
             return new LoginResponseDto
             {
                 Token = token,
-                Role = user.Role.ToString()  // Retorna el rol del usuario
+                Role = user.Role.ToString()
             };
         }
 
@@ -70,7 +69,8 @@ namespace ProyectoFinal.Services
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString())  // Agregar el rol al token
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("phone", user.Phone ?? "") // Añadir claim phone
             };
 
             var key = new SymmetricSecurityKey(

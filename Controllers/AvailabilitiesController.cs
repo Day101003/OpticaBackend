@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProyectoFinal.Data;
 using ProyectoFinal.Models;
-using Microsoft.Extensions.Localization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProyectoFinal.Controllers
 {
@@ -16,12 +14,10 @@ namespace ProyectoFinal.Controllers
     public class AvailabilitiesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IStringLocalizer<Messages> _localizer;
 
-        public AvailabilitiesController(AppDbContext context, IStringLocalizer<Messages> localizer)
+        public AvailabilitiesController(AppDbContext context)
         {
             _context = context;
-            _localizer = localizer;
         }
 
         // GET: api/Availabilities
@@ -39,10 +35,20 @@ namespace ProyectoFinal.Controllers
 
             if (availability == null)
             {
-                return NotFound(new { message = _localizer["NotFound"] });
+                return NotFound();
             }
 
             return availability;
+        }
+
+        // POST: api/Availabilities
+        [HttpPost]
+        public async Task<ActionResult<Availability>> PostAvailability(Availability availability)
+        {
+            _context.Availability.Add(availability);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetAvailability", new { id = availability.Id }, availability);
         }
 
         // PUT: api/Availabilities/5
@@ -51,7 +57,7 @@ namespace ProyectoFinal.Controllers
         {
             if (id != availability.Id)
             {
-                return BadRequest(new { message = _localizer["InvalidRequest"] });
+                return BadRequest();
             }
 
             _context.Entry(availability).State = EntityState.Modified;
@@ -64,7 +70,7 @@ namespace ProyectoFinal.Controllers
             {
                 if (!AvailabilityExists(id))
                 {
-                    return NotFound(new { message = _localizer["NotFound"] });
+                    return NotFound();
                 }
                 else
                 {
@@ -72,18 +78,7 @@ namespace ProyectoFinal.Controllers
                 }
             }
 
-            return Ok(new { message = _localizer["Updated"] });
-        }
-
-        // POST: api/Availabilities
-        [HttpPost]
-        public async Task<ActionResult<Availability>> PostAvailability(Availability availability)
-        {
-            _context.Availability.Add(availability);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAvailability", new { id = availability.Id },
-                new { message = _localizer["Created"], data = availability });
+            return NoContent();
         }
 
         // DELETE: api/Availabilities/5
@@ -93,13 +88,91 @@ namespace ProyectoFinal.Controllers
             var availability = await _context.Availability.FindAsync(id);
             if (availability == null)
             {
-                return NotFound(new { message = _localizer["NotFound"] });
+                return NotFound();
             }
 
             _context.Availability.Remove(availability);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = _localizer["Deleted"] });
+            return NoContent();
+        }
+
+        // POST: api/Availabilities/generate
+        [HttpPost("generate")]
+        public async Task<IActionResult> GenerateAvailabilities()
+        {
+            try
+            {
+                var now = DateTime.Now;
+                var startDate = new DateTime(now.Year, now.Month, 1);
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+
+                var slots = new List<Availability>();
+                var hours = new TimeSpan[] {
+                    new TimeSpan(7, 0, 0),  // 7:00 AM
+                    new TimeSpan(9, 0, 0),  // 9:00 AM
+                    new TimeSpan(11, 0, 0), // 11:00 AM
+                    new TimeSpan(13, 0, 0), // 1:00 PM
+                    new TimeSpan(15, 0, 0), // 3:00 PM
+                    new TimeSpan(17, 0, 0)  // 5:00 PM
+                };
+
+                for (var date = startDate; date <= endDate; date = date.AddDays(1))
+                {
+                    // Opcional: Excluir fines de semana
+                    if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                        continue;
+
+                    foreach (var hour in hours)
+                    {
+                        // Verificar si el slot ya existe
+                        var exists = await _context.Availability
+                            .AnyAsync(a => a.AvailableDate.Date == date.Date && a.Hour == hour);
+
+                        if (!exists)
+                        {
+                            slots.Add(new Availability
+                            {
+                                AvailableDate = date,
+                                Hour = hour,
+                                Available = true
+                            });
+                        }
+                    }
+                }
+
+                _context.Availability.AddRange(slots);
+                await _context.SaveChangesAsync();
+                return Ok(new { Message = $"{slots.Count} slots generated for {startDate:MMMM yyyy}" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error generating availabilities", Error = ex.Message });
+            }
+        }
+
+        // GET: api/Availabilities/available/{year}/{month}
+        [HttpGet("available/{year}/{month}")]
+        public async Task<IActionResult> GetAvailableSlots(int year, int month)
+        {
+            try
+            {
+                var startDate = new DateTime(year, month, 1);
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+
+                var slots = await _context.Availability
+                    .Where(a => a.AvailableDate >= startDate && a.AvailableDate <= endDate && a.Available)
+                    .Select(a => new { a.Id, a.AvailableDate, a.Hour })
+                    .OrderBy(a => a.AvailableDate)
+                    .ThenBy(a => a.Hour)
+                    .ToListAsync();
+
+                return Ok(slots);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Error retrieving available slots", Error = ex.Message });
+            }
         }
 
         private bool AvailabilityExists(int id)
@@ -108,4 +181,3 @@ namespace ProyectoFinal.Controllers
         }
     }
 }
-
